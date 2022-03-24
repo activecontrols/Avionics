@@ -1,6 +1,0 @@
-print('Test')
-print('Avi')
-print('Dylan')
-print('Vishy')
-print('Stephen')
-print('Radman')
