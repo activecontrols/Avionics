@@ -145,7 +145,7 @@ int custom_comm_update(void) {
   if (Serial.available() > 0) {
     throttle = Serial.readString().toInt();
     Serial.println("Recieved data");
-    delay(10000);
+    // delay(10000);
   }
 
   ret = 0;
@@ -169,7 +169,9 @@ int custom_comm_update(void) {
   int16_t rpm;
   uint8_t deg;
   uint16_t voltage, current;
-
+  int8_t err;
+  
+  ESCCMD_read_err(0, &err);
   ESCCMD_read_rpm(0, &rpm);
   ESCCMD_read_deg(0, &deg);
   ESCCMD_read_volt(0, &voltage);
@@ -177,7 +179,7 @@ int custom_comm_update(void) {
 
   // Send data structure to host
   Serial.print((int)rpm); Serial.print(","); Serial.print((int)deg); Serial.print(","); Serial.print((int)voltage); Serial.print(","); Serial.print((int)current); Serial.print(","); Serial.println((int)throttle);
-
+  // Serial.println((int)err);
   // Force immediate transmission
   // Serial.flush();
 
@@ -216,13 +218,16 @@ void setup() {
   ESCCMD_init(ESCPID_NB_ESC);
 
   // Arming ESCs
-  ESCCMD_arm_all();
+  Serial.println(ESCCMD_arm_all());
+  // delay(20000);
 
   // Switch 3D mode on
-  // ESCCMD_3D_on();
+  ESCCMD_3D_off();
 
   // Arming ESCs
   ESCCMD_arm_all();
+
+  ESCCMD_throttle(0, 0);  
 
   // Start periodic loop
   ESCCMD_start_timer();
@@ -250,7 +255,6 @@ void loop() {
   custom_comm_update();
 
   if (ret == ESCCMD_TIC_OCCURED) {
-
     // Process timer event
 
     // Read all measurements and compute current control signal
@@ -258,6 +262,7 @@ void loop() {
       // Send control signal if reference has been sufficiently refreshed
       if (ESCPID_comm_wd < ESCPID_COMM_WD_LEVEL) {
         ret = ESCCMD_throttle(i, throttle);
+        // Serial.println(ret);
       } else {
         AWPID_reset();
       }
