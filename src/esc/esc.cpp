@@ -1,4 +1,5 @@
 #include "HX711.h"
+#include "esc.hpp"
 #include <Servo.h>
 
 // HX711 circuit wiring
