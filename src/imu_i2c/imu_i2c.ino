@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
+
 // Basic demo for accelerometer & gyro readings from Adafruit
 // LSM6DSOX sensor
 
@@ -17,6 +18,7 @@ Adafruit_LSM6DSOX imu = Adafruit_LSM6DSOX();
 void setup(void) {
   Wire.begin();
   imu.begin_I2C();
+  
 }
 
 void loop() {
@@ -27,21 +29,21 @@ void loop() {
   float x_accel = a.acceleration.x;
   float y_accel = a.acceleration.y;
   float z_accel = a.acceleration.z;
-  Serial.print("Accelerometer data: X=");
+  // Serial.print("Accelerometer data: X=");
   Serial.print(x_accel);
-  Serial.print(" Y=");
+  Serial.print(",");
   Serial.print(y_accel);
-  Serial.print(" Z=");
-  Serial.println(z_accel);
+  Serial.print(",");
+  Serial.print(z_accel);
 
   float x_gyro = g.gyro.x;
   float y_gyro = g.gyro.y;
   float z_gyro = g.gyro.z;
-  Serial.print("Gyroscope data: X=");
+  Serial.print(",");
   Serial.print(x_gyro);
-  Serial.print(" Y=");
+  Serial.print(",");
   Serial.print(y_gyro);
-  Serial.print(" Z=");
+  Serial.print(",");
   Serial.println(z_gyro);
 
   delay(100);
