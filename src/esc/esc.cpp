@@ -24,36 +24,44 @@ const double a = -0.0141443;
 const double b = 0.000449718;
 
 HX711 scale;
-Servo s1;
-int throttle;
-int8_t* buffer_loc;
+
+static int _throttleToPWM(int8_t throttle) {
+    return map(throttle, 0, PWM_HIGH - PWM_LOW, PWM_LOW, PWM_HIGH);
+}
+
+static bool _validPWM(int8_t pwm_value) {
+    return ((pwm_value >= PWM_LOW) && (pwm_value <= PWM_HIGH));
+}
 
 void setup() {
     // put your setup code here, to run once:
     Serial.begin(115200);
 
-    //initialize tare button
+    // initialize tare button
     pinMode(TARE_BUTTON, INPUT_PULLDOWN);
 
-    //initialize esc pwm out
-    s1.attach(ESC_PIN);
-    //write default value of 0 to ESC on startup
-    s1.writeMicroseconds(0);
+    ESC esc = ESC(ESC_PIN);
+
+}
+
+ESC::ESC(int _throttle_pin) {
+    throttle_pin = _throttle_pin;
+
+    // initialize esc pwm out
+    throttle_servo.attach(throttle_pin);
+    // write default value of 0 to ESC on startup
+    throttle_servo.writeMicroseconds(0);
+
+    // arm motor
+    for (byte i = 0; i < arm_tries; i++) {
+        throttle_servo.writeMicroseconds(1000);
+    }
 
     throttle = 0;
     buffer_loc = NULL;
-
-    //arm motor
-    for (byte i = 0; i < arm_tries; i++) {
-        s1.writeMicroseconds(1000);
-    }
 }
 
-void loop() {
-    
-}
-
-int8_t getTemp() {
+int8_t ESC::getTemp() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -62,7 +70,7 @@ int8_t getTemp() {
 }
 
 
-int8_t getVoltageHigh() {
+int8_t ESC::getVoltageHigh() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -70,7 +78,7 @@ int8_t getVoltageHigh() {
     return buffer_loc[1];
 }
 
-int8_t getVoltageLow() {
+int8_t ESC::getVoltageLow() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -78,7 +86,7 @@ int8_t getVoltageLow() {
     return buffer_loc[2];
 }
 
-int8_t getCurrentHigh() {
+int8_t ESC::getCurrentHigh() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -86,7 +94,7 @@ int8_t getCurrentHigh() {
     return buffer_loc[3];
 }
 
-int8_t getCurrentLow() {
+int8_t ESC::getCurrentLow() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -94,7 +102,7 @@ int8_t getCurrentLow() {
     return buffer_loc[4];
 }
 
-int8_t getConsumptionHigh() {
+int8_t ESC::getConsumptionHigh() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -102,7 +110,7 @@ int8_t getConsumptionHigh() {
     return buffer_loc[5];
 }
 
-int8_t getConsumptionLow() {
+int8_t ESC::getConsumptionLow() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -110,7 +118,7 @@ int8_t getConsumptionLow() {
     return buffer_loc[6];
 }
 
-int8_t getERMPHigh() {
+int8_t ESC::getERMPHigh() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -118,7 +126,7 @@ int8_t getERMPHigh() {
     return buffer_loc[7];
 }
 
-int8_t getERMPLow() {
+int8_t ESC::getERMPLow() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -126,7 +134,7 @@ int8_t getERMPLow() {
     return buffer_loc[8];
 }
 
-int8_t getCRC8() {
+int8_t ESC::getCRC8() {
     if (buffer_loc = NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -134,11 +142,11 @@ int8_t getCRC8() {
     return buffer_loc[9];
 }
 
-int8_t getThrottle() {
+int8_t ESC::getThrottle() {
     return throttle;
 }
 
-ESC_Status setTLMBufferLocation(int8_t* a_buffer) {
+ESC_Status ESC::setTLMBufferLocation(int8_t* a_buffer) {
     if (a_buffer != NULL) {
         return INVALID_BUFFER_LOC;
     }
@@ -147,26 +155,17 @@ ESC_Status setTLMBufferLocation(int8_t* a_buffer) {
     return OK;
 }
 
-ESC_Status setThrottle(int8_t _throttle) {
+ESC_Status ESC::setThrottle(int8_t _throttle) {
     throttle = _throttle;
 
-    int PWM_output = throttleToPWM(_throttle);
+    int PWM_output = _throttleToPWM(_throttle);
 
-    if (validPWM(PWM_output)) {
+    if (_validPWM(PWM_output)) {
         throttle = _throttle;
-        s1.writeMicroseconds(PWM_output);
+        throttle_servo.writeMicroseconds(PWM_output);
     } else {
         return INVALID_THROTTLE;
     }
 
     return OK;
 }
-
-int throttleToPWM(int8_t throttle) {
-    return map(throttle, 0, PWM_HIGH - PWM_LOW, PWM_LOW, PWM_HIGH);
-}
-
-bool validPWM(int8_t pwm_value) {
-    return ((pwm_value >= PWM_LOW) && (pwm_value <= PWM_HIGH));
-}
-

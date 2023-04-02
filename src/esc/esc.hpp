@@ -2,6 +2,7 @@
 
 #define ESC_H
 
+#include <Servo.h>
 
 enum ESC_Status {
     OK,
@@ -9,24 +10,31 @@ enum ESC_Status {
     INVALID_BUFFER_LOC
 };
 
-// getters for TLM data
-int getTemp();
-int getVoltageHigh();
-int getVoltageLow();
-int getCurrentHigh();
-int getCurrentLow();
-int getConsumptionHigh();
-int getConsumptionLow();
-int getERMPHigh();
-int getERMPLow();
-int getCRC8();
+class ESC {
+    public:
+        ESC(int _throttle_pin);
 
-int getThrottle();
+        ESC_Status setThrottle(int throttle);
+        ESC_Status setTLMBufferLocation(int buffer_loc);
+        int8_t getThrottle();
+        int8_t getTemp();
+        int8_t getVoltageHigh();
+        int8_t getVoltageLow();
+        int8_t getCurrentHigh();
+        int8_t getCurrentLow();
+        int8_t getConsumptionHigh();
+        int8_t getConsumptionLow();
+        int8_t getERMPHigh();
+        int8_t getERMPLow();
+        int8_t getCRC8();
 
-ESC_Status setThrottle();
-ESC_Status setTLMBufferLocation();
+    private:
 
-int throttleToPWM(int throttle);
-bool validPWM(int PWM_out);
+    protected:
+        int throttle_pin;
+        int throttle;
+        int8_t* buffer_loc;
+        Servo throttle_servo;
+};
 
 #endif
