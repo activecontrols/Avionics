@@ -1,64 +1,69 @@
-#include <arduino.h>
-#define Tlm_length 10
+#include <Arduino.h>
+#include <HardwareSerial.h>
+
+#define TLM_LENGTH 10
+
 volatile bool flagTlm = false;
 volatile bool requestTlm = false;
 
-struch TlmData(){
-uint8_t temperature;
+struct TlmData {
+  uint8_t temperature;
   uint16_t voltage;
   uint16_t current;
   uint16_t consumption;
   uint16_t rpm;
   bool crcCheck;
+} tlmData;
+
+void setup() {
+  Serial.begin(115200);
+  Serial3.begin(115200);
+  attachInterruptVector(IRQ_UART3_STATUS, uart3_isr);
 }
-void readTlm();
-uint16_t getRpm(); 
-bool isTlmAvailable();
-void resetTlmFlag();
-void enableTlm();
-void disableTlm();
-uint8_t update_crc8(uint8_t crc, uint8_t crc_seed);
-uint8_t get_crc8(const uint8_t *Buf, const uint8_t BufLen);
 
-void readTlm() {
-  noInterrupts();
-  if (isTlmAvailable()) {
-    resetTlmFlag();
-    interrupts();
-    static uint8_t bufferTlm[TLM_LENGTH];
-    while (Serial1.available() < TLM_LENGTH);
+void loop() {
+  if (requestTlm) {
+    Serial3.write(0x55); // send telemetry request
+    delay(10);
+    enableTlm();
+  }
+}
 
-    for (int i = 0; i < TLM_LENGTH; i++) {
-      bufferTlm[i] = Serial1.read();
-    }
-    tlmData.temperature = bufferTlm[0];
-    tlmData.voltage = (bufferTlm[1] << 8) | bufferTlm[2];
-    tlmData.current = (bufferTlm[3] << 8) | bufferTlm[4];
-    tlmData.consumption = (bufferTlm[5] << 8) | bufferTlm[6];
-    tlmData.rpm = (bufferTlm[7] << 8) | bufferTlm[8];
-    tlmData.crc_8 = (bufferTlm[9] == get_crc8(bufferTlm, TLM_LENGTH-1));
-    
-    if(tlmData.crc8)
-    {
-        printf("No error");
-    }
-    else{
-        printf("CRC error");
+void uart3_isr() {
+  uint32_t status = UART3_S1;
+  uint8_t data;
+
+  if (status & UART_S1_RDRF) { // receive data register full
+    data = UART3_D;
+
+    if (data == 0xAA) { // start byte
+      static uint8_t bufferTlm[TLM_LENGTH];
+      uint8_t index = 0;
+
+      while (index < TLM_LENGTH) {
+        while (!(UART3_S1 & UART_S1_RDRF)); // wait for next byte
+        bufferTlm[index++] = UART3_D;
+      }
+
+      tlmData.temperature = bufferTlm[0];
+      tlmData.voltage = (bufferTlm[1] << 8) | bufferTlm[2];
+      tlmData.current = (bufferTlm[3] << 8) | bufferTlm[4];
+      tlmData.consumption = (bufferTlm[5] << 8) | bufferTlm[6];
+      tlmData.rpm = (bufferTlm[7] << 8) | bufferTlm[8];
+      tlmData.crcCheck = (bufferTlm[9] == get_crc8(bufferTlm, TLM_LENGTH-1));
+
+      resetTlmFlag();
+
+      if (tlmData.crcCheck) {
+        Serial.println("No error");
+      }
+      else {
+        Serial.println("CRC error");
+      }
     }
   }
-    else{
-    interrupts();
 }
-}
-void resetTlmFlag() {
-  flagTlm = false;
-}
-bool isTlmAvailable() {
-  return flagTlm;
-}
-uint16_t getRpm() {
-  return tlmData.rpm;
-}
+
 void enableTlm() {
   if (!requestTlm) {
     noInterrupts();
@@ -66,6 +71,7 @@ void enableTlm() {
     interrupts();
   }
 }
+
 void disableTlm() {
   if (requestTlm) {
     noInterrupts();
@@ -73,16 +79,25 @@ void disableTlm() {
     interrupts();
   }
 }
-uint8_t update_crc8(uint8_t crc, uint8_t crc_seed){
-        uint8_t crc_u, i;
-        crc_u=crc;
-        crc_u^=crc_seed;
-        for(i=0;i<8;i++)crc_u=(crc_u & 0x80) ? 0x7 ^(crc_u<<1):(crc_u<<1);
-        return(crc_u);
+
+void resetTlmFlag() {
+  flagTlm = false;
 }
-uint8_t get_crc8(const uint8_t *Buf, const uint8_t BufLen)
-{
-        uint8_t crc=0,i;
-        for(i=0;i<BufLen;i++)crc=update_crc8(Buf[i],crc);
-        return(crc);
+
+bool isTlmAvailable() {
+  return flagTlm;
+}
+
+uint8_t update_crc8(uint8_t crc, uint8_t crc_seed) {
+  uint8_t crc_u, i;
+  crc_u=crc;
+  crc_u^=crc_seed;
+  for(i=0;i<8;i++)crc_u=(crc_u & 0x80) ? 0x7 ^(crc_u<<1):(crc_u<<1);
+  return(crc_u);
+}
+
+uint8_t get_crc8(const uint8_t *Buf, const uint8_t BufLen) {
+  uint8_t crc=0,i;
+  for(i=0;i<BufLen;i++)crc=update_crc8(Buf[i],crc);
+  return(crc);
 }
