@@ -6,9 +6,19 @@ This Repo is organized into the following project folders:
 ASTRA, Lander, Ground_Station, and DAQ
 
 ## ASTRA
+This Folder holds all code associated with the ASTRA project.
 
-### /src
 ### /lib
+/lib is a folder used for libraries and dependencies associated with the code in /src.
+### /src
+/src is a folder used for storing c++ files. Within /src you can find the following subfolders:
+#### /IMU
+
+#### /Barometer
+
+#### /ESC
+
+#### /BMS
 
 ## Lander
 
