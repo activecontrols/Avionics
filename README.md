@@ -1,3 +1,5 @@
+![Logo](https://purdueseds.space/wp-content/uploads/2022/02/PSP-ActiveControls-1Color-White.svg)  
+
 # Active Controls Avionics Repository
 
 Welcome to the AC Avionics Repository!
