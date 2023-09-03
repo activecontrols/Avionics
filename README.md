@@ -11,16 +11,16 @@ ASTRA, Lander, Ground_Station, and DAQ
 This Folder holds all code associated with the ASTRA project.
 
 ### /lib
-/lib is a folder used for libraries and dependencies associated with the code in /src.
+This folder is used for libraries and dependencies associated with the code in /src.
 ### /src
-/src is a folder used for storing c++ files. Within /src you can find the following subfolders:
-#### /IMU
+This folder is used for storing c++ files. Within /src you can find the following subfolders:
+###     /IMU
 
-#### /Barometer
+####    /Barometer
 
-#### /ESC
+####    /ESC
 
-#### /BMS
+####    /BMS
 
 ## Lander
 
