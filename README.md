@@ -25,18 +25,24 @@ This folder is used for storing c++ files. Within /src you can find the followin
 
 ## Lander
 
-### /src
 ### /lib
+This folder is used for libraries and dependencies associated with the code in /src.
+### /src
+This folder is used for storing c++ files.
 
 ## Ground_Station
 
-### /src
 ### /lib
+This folder is used for libraries and dependencies associated with the code in /src.
+### /src
+This folder is used for storing c++ files.
 
 ## DAQ
 
-### /src
 ### /lib
+This folder is used for libraries and dependencies associated with the code in /src.
+### /src
+This folder is used for storing c++ files.
 
 
 
