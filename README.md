@@ -28,6 +28,8 @@ This folder is dedicated to BMS drivers
 ## DAQ
 This folder holds all code associated with test stands and setups that require data aquisition.
 
+### /Loadcell
+This folder is dedicated to the -Insert Model Here- Loadcell
 ### /Thrust_Stand
 This folder is dedicated to the Thrust Stand
 ### /Torque_Stand
