@@ -5,46 +5,38 @@
 Welcome to the AC Avionics Repository!
 
 This Repo is organized into the following project folders:
-ASTRA, Lander, Ground_Station, and DAQ
+ASTRA, DAQ, Ground_Station, and Lander
+
+Most folders in this repository will have two subfolders: /src and /lib
+#### /lib
+This folder is used for libraries and dependencies associated with the code in /src.
+#### /src
+This folder is used for storing c++ files. Within /src you can find the following subfolders:
 
 ## ASTRA
 This folder holds all low-level code associated with the ASTRA project.
 
-### /lib
-This folder is used for libraries and dependencies associated with the code in /src.
-### /src
-This folder is used for storing c++ files. Within /src you can find the following subfolders:
-* #### /IMU
+### /IMU
     This folder is dedicated to IMU drivers
-* #### /Barometer
+### /Barometer
     This folder is dedicated to Barometer drivers
-* #### /ESC
+### /ESC
     This folder is dedicated to ESC drivers
-* #### /BMS
+### /BMS
     This folder is dedicated to BMS drivers
 
-## Lander
+## DAQ
+This folder holds all code associated with test stands and setups that require data aquisition.
 
-### /lib
-This folder is used for libraries and dependencies associated with the code in /src.
-### /src
-This folder is used for storing c++ files.
+### /Thrust_Stand
+This folder is dedicated to BMS drivers
+### /Torque_Stand
+This folder is dedicated to BMS drivers
+### /Mag_Encoders
+This folder is dedicated to BMS drivers
 
 ## Ground_Station
+This folder holds all code associated with the Ground Base Station.
 
-### /lib
-This folder is used for libraries and dependencies associated with the code in /src.
-### /src
-This folder is used for storing c++ files.
-
-## DAQ
-
-### /lib
-This folder is used for libraries and dependencies associated with the code in /src.
-### /src
-This folder is used for storing c++ files.
-
-
-
-
-
+## Lander
+This folder holds all low-level code associated with the Lander project.
