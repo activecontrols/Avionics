@@ -8,7 +8,7 @@ This Repo is organized into the following project folders:
 ASTRA, Lander, Ground_Station, and DAQ
 
 ## ASTRA
-This Folder holds all code associated with the ASTRA project.
+This folder holds all low-level code associated with the ASTRA project.
 
 ### /lib
 This folder is used for libraries and dependencies associated with the code in /src.
