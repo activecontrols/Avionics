@@ -14,13 +14,10 @@ This Folder holds all code associated with the ASTRA project.
 This folder is used for libraries and dependencies associated with the code in /src.
 ### /src
 This folder is used for storing c++ files. Within /src you can find the following subfolders:
-  #### /IMU
-
-  #### /Barometer
-
-  #### /ESC
-
-  #### /BMS
+* #### /IMU
+#### /Barometer
+#### /ESC
+#### /BMS
 
 ## Lander
 
