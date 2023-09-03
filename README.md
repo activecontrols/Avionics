@@ -15,9 +15,13 @@ This folder is used for libraries and dependencies associated with the code in /
 ### /src
 This folder is used for storing c++ files. Within /src you can find the following subfolders:
 * #### /IMU
-#### /Barometer
-#### /ESC
-#### /BMS
+    This folder is dedicated to IMU drivers
+* #### /Barometer
+    This folder is dedicated to Barometer drivers
+* #### /ESC
+    This folder is dedicated to ESC drivers
+* #### /BMS
+    This folder is dedicated to BMS drivers
 
 ## Lander
 
