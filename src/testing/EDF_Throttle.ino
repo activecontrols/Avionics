@@ -13,6 +13,7 @@ double force;
 int throttle_setting;
 int previous_throttle_setting;
 int throttle_cap;
+char[10] user_input;
 
 //ESC PWM wiring
 const int ESC_PIN = 9;
@@ -75,7 +76,11 @@ void loop() {
   if (Serial.available() > 0) {
     previous_throttle_setting = throttle_setting;
     // read the incoming byte:
-    throttle_setting = Serial.readString().toInt();
+    user_input = Serial.readString();
+    throttle_setting = user_input.toInt();
+    Serial.print("THROTTLE INPUT: ")
+    Serial.print(",")
+    Serial.print(throttle_setting);
     //Capping throttle at a given value
     if(throttle_setting >= throttle_cap){
       throttle_setting = throttle_cap;
