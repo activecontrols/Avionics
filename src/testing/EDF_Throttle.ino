@@ -6,6 +6,14 @@ const int LOADCELL_DOUT_PIN = 5;
 const int LOADCELL_SCK_PIN = 4;
 const int TARE_BUTTON = 2;
 
+// Variables used
+int time;
+double raw_reading;
+double force;
+int throttle_setting;
+int previous_throttle_setting;
+int throttle_cap;
+
 //ESC PWM wiring
 const int ESC_PIN = 9;
 
@@ -49,6 +57,9 @@ void setup() {
   for (byte i = 0; i < arm_tries; i++) {
     s1.writeMicroseconds(1000);
   }
+  throttle_setting = 0;
+  previous_throttle_setting = 0;
+  throttle_cap = 20;
 }
 
 void loop() {
@@ -62,27 +73,32 @@ void loop() {
 
   //read command from user input on serial
   if (Serial.available() > 0) {
+    previous_throttle_setting = throttle_setting;
     // read the incoming byte:
-    int throttle_setting = Serial.readString().toInt();
-    if(throttle_setting >= 20){
-      throttle_setting = 20;
+    throttle_setting = Serial.readString().toInt();
+    //Capping throttle at a given value
+    if(throttle_setting >= throttle_cap){
+      throttle_setting = throttle_cap;
     }
+
+    if(abs(throttle_setting - previous_throttle_setting > 20)){
+      throttle_setting = throttle_setting + sign(throttle_setting - previous_throttle_setting) * 20;
+    }
+
     int PWM_output = throttleToPWM(throttle_setting);
 
     if (validPWM(PWM_output)) {
       s1.writeMicroseconds(PWM_output);
-
-      for (int i = 0; i < transient_record; i++) {
-        int time = millis();
-        double raw_reading = scale.get_units();
-        double force = (a * raw_reading + b);
-        Serial.print(time);
-        Serial.print(",");
-        Serial.print(throttle_setting);
-        Serial.print(",");
-        Serial.println(force, 3);
-      }
     }
+  } else {
+    time = millis();
+    raw_reading = scale.get_units();
+    force = (a * raw_reading + b);
+    Serial.print(time);
+    Serial.print(",");
+    Serial.print(throttle_setting);
+    Serial.print(",");
+    Serial.println(force, 3);
   }
 }
 
