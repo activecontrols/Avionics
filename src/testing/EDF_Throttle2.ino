@@ -1,9 +1,9 @@
 #include "HX711.h"
 #include <Servo.h>
-#include "esc.hpp"
+#include "esc.h"
 
 
-char[] input;
+String input;
 int throttle_setting;
 int previous_throttle_setting;
 int ESC_PIN;
@@ -27,9 +27,9 @@ void setup() {
 }
 
 void loop(){
-    if(Serial.available > 0){
+    if(Serial.available() > 0){
         input = Serial.readString();
     } else {
-        Serial.print();
+        Serial.print(" ");
     }
 }
