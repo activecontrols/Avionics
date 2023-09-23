@@ -5,6 +5,7 @@
 const int LOADCELL_DOUT_PIN = 5;
 const int LOADCELL_SCK_PIN = 4;
 const int TARE_BUTTON = 2;
+const int RPM_pin = A0;
 
 // Variables used
 int time;
@@ -14,6 +15,7 @@ int throttle_setting;
 int previous_throttle_setting;
 int throttle_cap;
 char[10] user_input;
+int RPM_reading;
 
 //ESC PWM wiring
 const int ESC_PIN = 9;
@@ -77,10 +79,11 @@ void loop() {
     previous_throttle_setting = throttle_setting;
     // read the incoming byte:
     user_input = Serial.readString();
-    throttle_setting = user_input.toInt();
-    Serial.print("THROTTLE INPUT: ")
+    Serial.println("THROTTLE INPUT: ")
     Serial.print(",")
     Serial.print(throttle_setting);
+    Serial.println();
+    throttle_setting = user_input.toInt();
     //Capping throttle at a given value
     if(throttle_setting >= throttle_cap){
       throttle_setting = throttle_cap;
@@ -99,11 +102,14 @@ void loop() {
     time = millis();
     raw_reading = scale.get_units();
     force = (a * raw_reading + b);
+    RPM_reading = analogRead(RPM_pin);
     Serial.print(time);
     Serial.print(",");
     Serial.print(throttle_setting);
     Serial.print(",");
-    Serial.println(force, 3);
+    Serial.print(force, 3);
+    Serial.print(",")
+    Serial.println(RPM_reading);
   }
 }
 
