@@ -14,8 +14,9 @@ double force;
 int throttle_setting;
 int previous_throttle_setting;
 int throttle_cap;
-char[10] user_input;
+String user_input;
 int RPM_reading;
+int PWM_output;
 
 //ESC PWM wiring
 const int ESC_PIN = 9;
@@ -41,7 +42,7 @@ void setup() {
   Serial.begin(115200);
 
   //initialize tare button
-  pinMode(TARE_BUTTON, INPUT);
+  //pinMode(TARE_BUTTON, INPUT);
 
   //initialize esc pwm out
   s1.attach(ESC_PIN);
@@ -73,14 +74,13 @@ void loop() {
 //    Serial.println("Tared scale");
 //    scale.tare();
 //  }
-
   //read command from user input on serial
   if (Serial.available() > 0) {
     previous_throttle_setting = throttle_setting;
     // read the incoming byte:
     user_input = Serial.readString();
-    Serial.println("THROTTLE INPUT: ")
-    Serial.print(",")
+    Serial.println("THROTTLE INPUT: ");
+    Serial.print(",");
     Serial.print(throttle_setting);
     Serial.println();
     throttle_setting = user_input.toInt();
@@ -88,17 +88,25 @@ void loop() {
     if(throttle_setting >= throttle_cap){
       throttle_setting = throttle_cap;
     }
+    int throttle_diff = throttle_setting - previous_throttle_setting;
 
-    if(abs(throttle_setting - previous_throttle_setting > 20)){
-      throttle_setting = throttle_setting + sign(throttle_setting - previous_throttle_setting) * 20;
+    if(abs(throttle_diff > 20)){
+      int signOfX = (throttle_diff > 0) - (throttle_diff < 0);
+      throttle_setting = throttle_setting + throttle_diff * (throttle_setting - previous_throttle_setting) * 20;
     }
 
-    int PWM_output = throttleToPWM(throttle_setting);
+    PWM_output = throttleToPWM(throttle_setting);
 
     if (validPWM(PWM_output)) {
       s1.writeMicroseconds(PWM_output);
     }
   } else {
+    PWM_output = throttleToPWM(throttle_setting);
+    
+    if (validPWM(PWM_output)) {
+      s1.writeMicroseconds(PWM_output);
+    }
+
     time = millis();
     raw_reading = scale.get_units();
     force = (a * raw_reading + b);
@@ -108,7 +116,7 @@ void loop() {
     Serial.print(throttle_setting);
     Serial.print(",");
     Serial.print(force, 3);
-    Serial.print(",")
+    Serial.print(",");
     Serial.println(RPM_reading);
   }
 }
