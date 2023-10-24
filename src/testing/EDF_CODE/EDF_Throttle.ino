@@ -8,15 +8,23 @@ const int TARE_BUTTON = 2;
 const int RPM_pin = A0;
 
 // Variables used
-int time;
-double raw_reading;
-double force;
-int throttle_setting;
-int previous_throttle_setting;
-int throttle_cap;
+int timer; // timer to mark throttle delay
+double raw_reading; // raw force reading
+double force; // adjusted force reading
+int throttle_setting; // throttle setting
+int RPM_reading; // RPM telemetry
+int PWM_output; // PWN output to throttle 
+int throttle_cap; // Max Throttle we want to reach
+int throttle_incrememnt; // Step increment to reach max throttle and then come back to 0
+int throttle_delay; // Time between each throttle increment/decrement in ms
+bool throttle_flag; // False = throttling up (increase), true = opposite
+
+// Variables used for manual throttling (commented out)
+int previous_throttle_setting; 
 String user_input;
-int RPM_reading;
-int PWM_output;
+int time;
+
+
 
 //ESC PWM wiring
 const int ESC_PIN = 9;
@@ -62,8 +70,11 @@ void setup() {
     s1.writeMicroseconds(1000);
   }
   throttle_setting = 0;
-  previous_throttle_setting = 0;
-  throttle_cap = 20;
+  //previous_throttle_setting = 0;
+  throttle_cap = 100;
+  throttle_flag = false; // false = increase
+  throttle_incrememnt = 10; 
+  throttle_delay = 10 * 1000; //s to ms 
 }
 
 void loop() {
@@ -75,7 +86,7 @@ void loop() {
 //    scale.tare();
 //  }
   //read command from user input on serial
-  if (Serial.available() > 0) {
+  /*if (Serial.available() > 0) {
     previous_throttle_setting = throttle_setting;
     // read the incoming byte:
     user_input = Serial.readString();
@@ -94,31 +105,42 @@ void loop() {
       int signOfX = (throttle_diff > 0) - (throttle_diff < 0);
       throttle_setting = throttle_setting + throttle_diff * (throttle_setting - previous_throttle_setting) * 20;
     }
+    */
 
-    PWM_output = throttleToPWM(throttle_setting);
+    if(!flag){
+      throttle_setting = throttle_setting + throttle_incrememnt;
+      if(throttle_setting == throttle_cap){
+        throttle_flag = true;
+      }
+      if(!writeThrottle(throttle_setting)){
 
-    if (validPWM(PWM_output)) {
-      s1.writeMicroseconds(PWM_output);
+      }
+      timer = millis();
+      while(millis() < timer + throttle_delay){
+        if(!writeThrottle(throttle_setting)){
+          
+        }
+        //time = millis();
+        //raw_reading = scale.get_units();
+        //force = (a * raw_reading + b);
+        //RPM_reading = analogRead(RPM_pin);
+        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin));
+      }
+    } else {
+      throttle_setting = throttle_setting - throttle_incrememnt;
+      if(endCode(throttle_setting)){
+
+      }
+      if(!writeThrottle(throttle_setting)){
+      }
+      timer = millis();
+      while(millis < timer + throttle_delay){
+        if(!writeThrottle(throttle_setting)){
+        }
+        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin));
+      }
+      // Code to stop arduino from exectuing anything else
     }
-  } else {
-    PWM_output = throttleToPWM(throttle_setting);
-    
-    if (validPWM(PWM_output)) {
-      s1.writeMicroseconds(PWM_output);
-    }
-
-    time = millis();
-    raw_reading = scale.get_units();
-    force = (a * raw_reading + b);
-    RPM_reading = analogRead(RPM_pin);
-    Serial.print(time);
-    Serial.print(",");
-    Serial.print(throttle_setting);
-    Serial.print(",");
-    Serial.print(force, 3);
-    Serial.print(",");
-    Serial.println(RPM_reading);
-  }
 }
 
 int throttleToPWM(int throttle) {
@@ -127,4 +149,37 @@ int throttleToPWM(int throttle) {
 
 bool validPWM(int PWM_out) {
   return ((PWM_out >= low_endpoint) && (PWM_out <= high_endpoint));
+}
+
+bool writeThrottle(int throttle){
+  throttle = map(throttle, 0, 100, low_endpoint, high_endpoint);
+  if((PWM_out >= low_endpoint) && (PWM_out <= high_endpoint)){
+    s1.writeMicroseconds(throttle);
+    return true;
+  } else {
+    while(1){
+      Serial.print("INVALID THROTTLE\n");
+    }
+    return false;
+  }
+}
+
+bool endCode(int throttle_setting){
+  if(throttle_setting < 0){
+    while(1){
+      Serial.print("Execution Ended\n")''
+    }
+    return false;
+  }
+  return true;
+}
+
+void printData(int time, int throttle, int force, int RPM){
+  Serial.print(time);
+  Serial.print(",");
+  Serial.print(throttle);
+  Serial.print(",");
+  Serial.print(force, 3);
+  Serial.print(",");
+  Serial.println(RPM);
 }
