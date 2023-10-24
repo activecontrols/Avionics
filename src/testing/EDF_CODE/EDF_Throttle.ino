@@ -1,5 +1,7 @@
 #include "HX711.h"
 #include <Servo.h>
+#include <SD.h>
+#include <SPI.h>
 
 // HX711 circuit wiring
 const int LOADCELL_DOUT_PIN = 5;
@@ -8,6 +10,7 @@ const int TARE_BUTTON = 2;
 const int RPM_pin = A0;
 
 // Variables used
+File testData; // File to record test data in
 int timer; // timer to mark throttle delay
 double raw_reading; // raw force reading
 double force; // adjusted force reading
@@ -49,6 +52,9 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
 
+  // Set the file up
+  testData = SD.open("testData.txt", FILE_WRITE); 
+  testData.write("----- Test Data -----\n");
   //initialize tare button
   //pinMode(TARE_BUTTON, INPUT);
 
@@ -107,7 +113,7 @@ void loop() {
     }
     */
 
-    if(!flag){
+    if(!throttle_flag){
       throttle_setting = throttle_setting + throttle_incrememnt;
       if(throttle_setting == throttle_cap){
         throttle_flag = true;
@@ -124,7 +130,7 @@ void loop() {
         //raw_reading = scale.get_units();
         //force = (a * raw_reading + b);
         //RPM_reading = analogRead(RPM_pin);
-        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin));
+        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
       }
     } else {
       throttle_setting = throttle_setting - throttle_incrememnt;
@@ -137,7 +143,7 @@ void loop() {
       while(millis < timer + throttle_delay){
         if(!writeThrottle(throttle_setting)){
         }
-        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin));
+        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
       }
       // Code to stop arduino from exectuing anything else
     }
@@ -153,7 +159,7 @@ bool validPWM(int PWM_out) {
 
 bool writeThrottle(int throttle){
   throttle = map(throttle, 0, 100, low_endpoint, high_endpoint);
-  if((PWM_out >= low_endpoint) && (PWM_out <= high_endpoint)){
+  if((throttle >= low_endpoint) && (throttle <= high_endpoint)){
     s1.writeMicroseconds(throttle);
     return true;
   } else {
@@ -167,19 +173,19 @@ bool writeThrottle(int throttle){
 bool endCode(int throttle_setting){
   if(throttle_setting < 0){
     while(1){
-      Serial.print("Execution Ended\n")''
+      Serial.print("Execution Ended\n");
     }
     return false;
   }
   return true;
 }
 
-void printData(int time, int throttle, int force, int RPM){
-  Serial.print(time);
-  Serial.print(",");
-  Serial.print(throttle);
-  Serial.print(",");
-  Serial.print(force, 3);
-  Serial.print(",");
-  Serial.println(RPM);
+void printData(int time, int throttle, int force, int RPM, File tD){
+  tD.write(time);
+  tD.write(",");
+  tD.write(throttle);
+  tD.write(",");
+  tD.write(force, 3);
+  tD.write(",");
+  tD.write(RPM);
 }
