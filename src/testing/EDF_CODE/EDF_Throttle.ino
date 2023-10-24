@@ -2,7 +2,9 @@
 #include <Servo.h>
 #include <SD.h>
 #include <SPI.h>
-
+#include <string.h>
+#include <iostream>
+using namespace std;
 // HX711 circuit wiring
 const int LOADCELL_DOUT_PIN = 5;
 const int LOADCELL_SCK_PIN = 4;
@@ -11,7 +13,7 @@ const int RPM_pin = A0;
 
 // Variables used
 File testData; // File to record test data in
-int timer; // timer to mark throttle delay
+long unsigned int timer; // timer to mark throttle delay
 double raw_reading; // raw force reading
 double force; // adjusted force reading
 int throttle_setting; // throttle setting
@@ -19,13 +21,13 @@ int RPM_reading; // RPM telemetry
 int PWM_output; // PWN output to throttle 
 int throttle_cap; // Max Throttle we want to reach
 int throttle_incrememnt; // Step increment to reach max throttle and then come back to 0
-int throttle_delay; // Time between each throttle increment/decrement in ms
+long unsigned int throttle_delay; // Time between each throttle increment/decrement in ms
 bool throttle_flag; // False = throttling up (increase), true = opposite
 
 // Variables used for manual throttling (commented out)
 int previous_throttle_setting; 
 String user_input;
-int time;
+//int time;
 
 
 
@@ -140,7 +142,7 @@ void loop() {
       if(!writeThrottle(throttle_setting)){
       }
       timer = millis();
-      while(millis < timer + throttle_delay){
+      while(millis() < timer + throttle_delay){
         if(!writeThrottle(throttle_setting)){
         }
         printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
@@ -180,12 +182,14 @@ bool endCode(int throttle_setting){
   return true;
 }
 
-void printData(int time, int throttle, int force, int RPM, File tD){
-  tD.write(time);
-  tD.write(",");
-  tD.write(throttle);
-  tD.write(",");
-  tD.write(force, 3);
-  tD.write(",");
-  tD.write(RPM);
+void printData(int time, int throttle, double force, int RPM, File tD){
+  tD.print(time);
+  tD.print(",");
+  tD.print(throttle);
+  tD.print(",");
+  String s = String(force,3);
+  tD.print(s);
+  tD.print(",");
+  tD.print(RPM);
+  tD.print("\n");
 }
