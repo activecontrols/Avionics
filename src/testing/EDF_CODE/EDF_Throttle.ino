@@ -143,6 +143,9 @@ void loop() {
     }
 }
 
+
+// Functions
+
 int throttleToPWM(int throttle) {
   return map(throttle, 0, 100, low_endpoint, high_endpoint);
 }
