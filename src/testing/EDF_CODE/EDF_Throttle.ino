@@ -117,7 +117,7 @@ void loop() {
 
     if(!throttle_flag){
       throttle_setting = throttle_setting + throttle_incrememnt;
-      if(throttle_setting == throttle_cap){
+      if(throttle_setting >= throttle_cap){
         throttle_flag = true;
       }
       if(!writeThrottle(throttle_setting)){
