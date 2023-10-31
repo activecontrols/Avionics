@@ -24,6 +24,8 @@ This folder is dedicated to Barometer drivers
 This folder is dedicated to ESC drivers
 ### /BMS
 This folder is dedicated to BMS drivers
+### /error
+This folder is associated with the error codes that can occur on any drivers. It is meant to be an easy look up for all driver error codes.
 
 ## DAQ
 This folder holds all code associated with test stands and setups that require data aquisition.
