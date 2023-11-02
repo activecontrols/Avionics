@@ -1,3 +1,7 @@
+
+#ifndef LSM6DS_LIS3MDL
+#define LSM6DS_LIS3MDL
+
 #include <Adafruit_LIS3MDL.h>
 Adafruit_LIS3MDL lis3mdl;
 
@@ -34,3 +38,5 @@ void setup_sensors(void) {
   lis3mdl.setPerformanceMode(LIS3MDL_MEDIUMMODE);
   lis3mdl.setOperationMode(LIS3MDL_CONTINUOUSMODE);
 }
+
+#endif
