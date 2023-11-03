@@ -120,14 +120,9 @@ void loop() {
       if(throttle_setting >= throttle_cap){
         throttle_flag = true;
       }
-      if(!writeThrottle(throttle_setting)){
-
-      }
+      writeThrottle(throttle_setting);
       timer = millis();
       while(millis() < timer + throttle_delay){
-        if(!writeThrottle(throttle_setting)){
-          
-        }
         //time = millis();
         //raw_reading = scale.get_units();
         //force = (a * raw_reading + b);
@@ -139,17 +134,17 @@ void loop() {
       if(endCode(throttle_setting)){
 
       }
-      if(!writeThrottle(throttle_setting)){
-      }
+      writeThrottle(throttle_setting);
       timer = millis();
       while(millis() < timer + throttle_delay){
-        if(!writeThrottle(throttle_setting)){
-        }
         printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
       }
       // Code to stop arduino from exectuing anything else
     }
 }
+
+
+// Functions
 
 int throttleToPWM(int throttle) {
   return map(throttle, 0, 100, low_endpoint, high_endpoint);
@@ -159,12 +154,28 @@ bool validPWM(int PWM_out) {
   return ((PWM_out >= low_endpoint) && (PWM_out <= high_endpoint));
 }
 
-bool writeThrottle(int throttle){
-  throttle = map(throttle, 0, 100, low_endpoint, high_endpoint);
+bool writeThrottle(int throttle_setting){
+  int throttle = map(throttle_setting, 0, 100, low_endpoint, high_endpoint);
   if((throttle >= low_endpoint) && (throttle <= high_endpoint)){
     s1.writeMicroseconds(throttle);
     return true;
   } else {
+    if(throttle_setting < 0){
+      throttle_setting = 0;
+      throttle = map(throttle_setting, 0, 100, low_endpoint, high_endpoint); 
+      s1.writeMicroseconds(throttle);
+    } else {
+      //EMERGENCY THROTTLE DOWN
+      while(throttle_setting > 0){
+        delay(2000);
+        throttle_setting = throttle_setting - 30;
+        if(throttle_setting < 0 ){
+          throttle_setting = 0;
+        }
+        throttle = map(throttle_setting, 0, 100, low_endpoint, high_endpoint); 
+        s1.writeMicroseconds(throttle);
+      }
+    }
     while(1){
       Serial.print("INVALID THROTTLE\n");
     }
