@@ -51,7 +51,7 @@ static uint32_t timestamp;
 // slower == better quality output
 static Adafruit_NXPSensorFusion filter; // slowest
 
-extern int setupIMU();
+extern int initalizeIMU();
 extern int updateIMU();
 
 #endif

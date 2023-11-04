@@ -38,7 +38,7 @@ int loadCalibration() {
 }
 
 
-int setupIMU() {
+int initalizeIMU() {
   Serial.begin(115200);
   while (!Serial) yield();
 
