@@ -3,10 +3,34 @@
 #include "../include/LSM6DS_LIS3MDL.h"
 
 
-
 float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
+
+int loadCalibration() {
+  cal.mag_hardiron[0] = 0.0;
+  cal.mag_hardiron[1] = 0.0;
+  cal.mag_hardiron[2] = 0.0;
+
+  // in uTesla
+  cal.mag_softiron[0] = 1.0;
+  cal.mag_softiron[1] = 0.0;
+  cal.mag_softiron[2] = 0.0;  
+  cal.mag_softiron[3] = 0.0;
+  cal.mag_softiron[4] = 1.0;
+  cal.mag_softiron[5] = 0.0;  
+  cal.mag_softiron[6] = 0.0;
+  cal.mag_softiron[7] = 0.0;
+  cal.mag_softiron[8] = 1.0;  
+
+  // in Radians/s
+  cal.gyro_zerorate[0] = 0.0;
+  cal.gyro_zerorate[1] = 0.0;
+  cal.gyro_zerorate[2] = 0.0;
+
+  cal.saveCalibration();
+}
+
 
 int setupIMU() {
   Serial.begin(115200);
@@ -14,16 +38,28 @@ int setupIMU() {
 
   if (!cal.begin()) {
     //Failed to initialize calibration helper
+#if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
     Serial.print("Failed to initialize calibration helper");
+#endif
     return FAILED_CALIBRATION_HELPER_INIT;
-  } else if (!cal.loadCalibration()) {
+  }
+  
+  //Load calibration settings to teensy EEPROM
+  loadCalibration();
+
+  if (!cal.loadCalibration()) {
     //No calibration loaded/found
-    Serial.println("No calibration loaded/found");
-    return NO_CALIBRATION_FOUND;
+#if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
+    Serial.println("Failed to load calibration");
+#endif
+    return FAILED_LOAD_CALIBRATION;
   }
 
   if (!init_sensors()) {
     //Failed to find sensors
+#if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
+    Serial.println("Failed to find sensors");
+#endif
     return FAILED_SENSOR_INIT;
   }
   
@@ -43,24 +79,14 @@ int setupIMU() {
 }
 
 int updateIMU() {
-  // float roll, pitch, heading;
-  // float gx, gy, gz;
-
-  static uint8_t counter = 0;
-
-  // if ((millis() - timestamp) < (1000 / FILTER_UPDATE_RATE_HZ)) {
-  //   return;
-  // }
+  
   timestamp = millis();
+
   // Read the motion sensors
   sensors_event_t accel, gyro, mag;
   accelerometer->getEvent(&accel);
   gyroscope->getEvent(&gyro);
   magnetometer->getEvent(&mag);
-
-#if defined(AHRS_DEBUG_OUTPUT)
-  Serial.print("I2C took "); Serial.print(millis()-timestamp); Serial.println(" ms");
-#endif
 
   cal.calibrate(mag);
   cal.calibrate(accel);
@@ -76,18 +102,23 @@ int updateIMU() {
   filter.update(gx, gy, gz, 
                 accel.acceleration.x, accel.acceleration.y, accel.acceleration.z, 
                 mag.magnetic.x, mag.magnetic.y, mag.magnetic.z);
-#if defined(AHRS_DEBUG_OUTPUT)
-  Serial.print("Update took "); Serial.print(millis()-timestamp); Serial.println(" ms");
-#endif
 
-  // only print the calculated output once in a while
-  // if (counter++ <= PRINT_EVERY_N_UPDATES) {
-  //   return;
-  // }
-  // reset the counter
-  //counter = 0;
+  // print the heading, pitch and roll
+  roll = filter.getRoll();
+  pitch = filter.getPitch();
+  heading = filter.getYaw();
+
+
+  //float qw, qx, qy, qz;
+  filter.getQuaternion(&qw, &qx, &qy, &qz);
+
 
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
+
+  Serial.print("I2C took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+
+  Serial.print("Update took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+
   Serial.print("Raw: ");
   Serial.print(accel.acceleration.x, 4); Serial.print(", ");
   Serial.print(accel.acceleration.y, 4); Serial.print(", ");
@@ -98,12 +129,7 @@ int updateIMU() {
   Serial.print(mag.magnetic.x, 4); Serial.print(", ");
   Serial.print(mag.magnetic.y, 4); Serial.print(", ");
   Serial.print(mag.magnetic.z, 4); Serial.println("");
-#endif
 
-  // print the heading, pitch and roll
-  roll = filter.getRoll();
-  pitch = filter.getPitch();
-  heading = filter.getYaw();
   Serial.print("Orientation: ");
   Serial.print(heading);
   Serial.print(", ");
@@ -111,8 +137,6 @@ int updateIMU() {
   Serial.print(", ");
   Serial.println(roll);
 
-  //float qw, qx, qy, qz;
-  filter.getQuaternion(&qw, &qx, &qy, &qz);
   Serial.print("Quaternion: ");
   Serial.print(qw, 4);
   Serial.print(", ");
@@ -121,10 +145,9 @@ int updateIMU() {
   Serial.print(qy, 4);
   Serial.print(", ");
   Serial.println(qz, 4);  
-  
-#if defined(AHRS_DEBUG_OUTPUT)
   Serial.print("Took "); Serial.print(millis()-timestamp); Serial.println(" ms");
 #endif
+
 
   return NO_ERROR_CODE;
 
