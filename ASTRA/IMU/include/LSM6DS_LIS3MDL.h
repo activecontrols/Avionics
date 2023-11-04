@@ -1,13 +1,19 @@
 
+/*
+LSM6DS_LIS3MDL.h
+Description: Header file for sensor-setup function definitions
+Author: Vincent Palmerio
+Last updated: 11/4/2023
+*/
+
 #ifndef LSM6DS_LIS3MDL
 #define LSM6DS_LIS3MDL
 
 #include <Adafruit_LIS3MDL.h>
 Adafruit_LIS3MDL lis3mdl;
 
-// Can change this to be LSM6DSOX or whatever ya like
-#include <Adafruit_LSM6DS33.h>
-Adafruit_LSM6DS33 lsm6ds;
+#include <Adafruit_LSM6DSOX.h>
+Adafruit_LSM6DSOX lsm6ds;
 
 Adafruit_Sensor* accelerometer;
 Adafruit_Sensor* gyroscope;
