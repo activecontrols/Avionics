@@ -18,9 +18,6 @@ Last updated: 11/4/2023
 
 //uncomment to print data to console for just IMU
 //#define ASTRA_IMU_DEBUG 
-#define FILTER_UPDATE_RATE_HZ 100
-#define PRINT_EVERY_N_UPDATES 10
-
 
 
 
