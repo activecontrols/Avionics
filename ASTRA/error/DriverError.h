@@ -15,7 +15,7 @@ Last updated: 10/2/2023
 
 //IMU Error codes are in the 100's
 #define FAILED_CALIBRATION_HELPER_INIT -100
-#define NO_CALIBRATION_FOUND -101
+#define FAILED_LOAD_CALIBRATION -101
 #define FAILED_SENSOR_INIT -102
 
 
