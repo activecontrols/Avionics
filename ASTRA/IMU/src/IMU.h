@@ -1,4 +1,11 @@
 
+/*
+IMU.h - Header file for the IMU Driver
+Description: Contains all functions and variables to interact with the IMU
+Author: Vincent Palmerio
+Last updated: 11/4/2023
+*/
+
 #ifndef IMU_H
 #define IMU_H
 
@@ -13,6 +20,8 @@
 //#define ASTRA_IMU_DEBUG 
 #define FILTER_UPDATE_RATE_HZ 100
 #define PRINT_EVERY_N_UPDATES 10
+
+
 
 
 // Full orientation sensing using NXP/Madgwick/Mahony and a range of 9-DoF

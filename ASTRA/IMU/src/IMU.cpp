@@ -2,6 +2,12 @@
 #include "../../error/DriverError.h"
 #include "../include/LSM6DS_LIS3MDL.h"
 
+/*
+IMU.cpp 
+Description: Function definititions for declarations in IMU.h
+Author: Vincent Palmerio
+Last updated: 11/4/2023
+*/
 
 float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
