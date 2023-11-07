@@ -53,6 +53,7 @@ static Adafruit_NXPSensorFusion filter; // slowest
 
 extern int initalizeIMU();
 extern int updateIMU();
+extern int loadPresetCalibration();
 
 #endif
 

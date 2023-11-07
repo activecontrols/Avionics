@@ -13,7 +13,7 @@ float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
-int loadCalibration() {
+int loadPresetCalibration() {
   cal.mag_hardiron[0] = 0.0;
   cal.mag_hardiron[1] = 0.0;
   cal.mag_hardiron[2] = 0.0;
@@ -49,9 +49,6 @@ int initalizeIMU() {
 #endif
     return FAILED_CALIBRATION_HELPER_INIT;
   }
-  
-  //Load calibration settings to teensy EEPROM
-  loadCalibration();
 
   if (!cal.loadCalibration()) {
     //No calibration loaded/found
