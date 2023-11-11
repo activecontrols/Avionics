@@ -1,4 +1,4 @@
-#include "IMU.h"
+#include "../../../IMU/src/IMU.h"
 
 void setup() {
     initalizeIMU();
