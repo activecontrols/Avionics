@@ -35,6 +35,8 @@ int loadPresetCalibration() {
   cal.gyro_zerorate[2] = 0.0;
 
   cal.saveCalibration();
+
+  return NO_ERROR_CODE;
 }
 
 
@@ -74,8 +76,7 @@ int initalizeIMU() {
 
   setup_sensors();
   filter.begin(FILTER_UPDATE_RATE_HZ);
-  timestamp = millis();
-
+  
   Wire.setClock(400000); // 400KHz
 
   return NO_ERROR_CODE;
@@ -83,8 +84,6 @@ int initalizeIMU() {
 
 int updateIMU() {
   
-  timestamp = millis();
-
   // Read the motion sensors
   sensors_event_t accel, gyro, mag;
   accelerometer->getEvent(&accel);

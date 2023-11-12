@@ -46,7 +46,6 @@ Last updated: 11/4/2023
 extern float roll, pitch, heading;
 extern float gx, gy, gz; //degrees per second on gyro
 extern float qw, qx, qy, qz; //quaternarion
-static uint32_t timestamp;
 
 // slower == better quality output
 static Adafruit_NXPSensorFusion filter; // slowest
