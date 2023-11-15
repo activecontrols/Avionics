@@ -3,6 +3,18 @@
 #include <Wire.h>
 #include <Servo.h>
 
+/* Loadcell Diagram
+       4  __    _ 5
+         |  |  // 
+         |  | //
+ ______  |__|//______
+|______|  __  |______| 1
+3        |  |
+         |  |
+         |__| 2
+         
+*/
+
 // ESC variables
 const int ESC_PIN = 9;
 int arm_tries = 10;
