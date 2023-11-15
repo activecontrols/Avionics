@@ -9,9 +9,10 @@ using namespace std;
 const int LOADCELL_DOUT_PIN = 5;
 const int LOADCELL_SCK_PIN = 4;
 const int TARE_BUTTON = 2;
-const int RPM_pin = A0;
+const int RPM_pin = 14;
 
 // Variables used
+double torque_arm = 0.1158875;
 File testData; // File to record test data in
 long unsigned int timer; // timer to mark throttle delay
 double raw_reading; // raw force reading
@@ -23,6 +24,7 @@ int throttle_cap; // Max Throttle we want to reach
 int throttle_incrememnt; // Step increment to reach max throttle and then come back to 0
 long unsigned int throttle_delay; // Time between each throttle increment/decrement in ms
 bool throttle_flag; // False = throttling up (increase), true = opposite
+bool startFlag;
 
 // Variables used for manual throttling (commented out)
 int previous_throttle_setting; 
@@ -55,15 +57,15 @@ void setup() {
   Serial.begin(115200);
 
   // Set the file up
-  testData = SD.open("testData.txt", FILE_WRITE); 
-  testData.write("----- Test Data -----\n");
+  //testData = SD.open("testData.txt", FILE_WRITE); 
+  //testData.write("----- Test Data -----\n");
   //initialize tare button
   //pinMode(TARE_BUTTON, INPUT);
 
   //initialize esc pwm out
   s1.attach(ESC_PIN);
   //write default value of 0 to ESC on startup
-  s1.writeMicroseconds(0);
+  s1.writeMicroseconds(1020);
 
   //initialize scale on scale output pins
   scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
@@ -81,11 +83,26 @@ void setup() {
   //previous_throttle_setting = 0;
   throttle_cap = 100;
   throttle_flag = false; // false = increase
-  throttle_incrememnt = 10; 
-  throttle_delay = 10 * 1000; //s to ms 
+  throttle_incrememnt = 5; 
+  throttle_delay = 2 * 1000; //s to ms 
+  startFlag = false;
 }
 
 void loop() {
+  
+  if(!startFlag){
+    while(Serial.available() == 0){
+    Serial.print("Waiting for Command Y");
+    delay(2000);
+    }
+  if(Serial.read() == ('Y')){
+    s1.write(1020);
+    Serial.print("Starting");
+    delay(10000);
+    startFlag = true;
+    }
+  }
+  
   // put your main code here, to run repeatedly:
 
   //if tare button is pressed, tare scale
@@ -127,17 +144,21 @@ void loop() {
         //raw_reading = scale.get_units();
         //force = (a * raw_reading + b);
         //RPM_reading = analogRead(RPM_pin);
-        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
+        printData(millis(), throttle_setting, (a*scale.get_units() + b) * torque_arm, analogRead(RPM_pin));
       }
     } else {
       throttle_setting = throttle_setting - throttle_incrememnt;
-      if(endCode(throttle_setting)){
-
+      if(throttle_setting < 0){
+        while(1){
+          Serial.print("EXECTUION ENDED\n");
+          s1.writeMicroseconds(low_endpoint);
+          delay(2000);
+        }
       }
       writeThrottle(throttle_setting);
       timer = millis();
-      while(millis() < timer + throttle_delay){
-        printData(millis(), throttle_setting, a*scale.get_units() + b, analogRead(RPM_pin), testData);
+      while(millis() < (timer + throttle_delay)){
+        printData(millis(), throttle_setting, (a*scale.get_units() + b)*torque_arm, analogRead(RPM_pin));
       }
       // Code to stop arduino from exectuing anything else
     }
@@ -193,14 +214,14 @@ bool endCode(int throttle_setting){
   return true;
 }
 
-void printData(int time, int throttle, double force, int RPM, File tD){
-  tD.print(time);
-  tD.print(",");
-  tD.print(throttle);
-  tD.print(",");
+void printData(int time, int throttle, double force, int RPM){
+  Serial.print(time);
+  Serial.print(",");
+  Serial.print(throttle);
+  Serial.print(",");
   String s = String(force,3);
-  tD.print(s);
-  tD.print(",");
-  tD.print(RPM);
-  tD.print("\n");
+  Serial.print(s);
+  Serial.print(",");
+  Serial.print(RPM);
+  Serial.print("\n");
 }
