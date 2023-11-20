@@ -13,26 +13,30 @@ float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
+//loads a predetermined calibration into the EEPROM
 int loadPresetCalibration() {
-  cal.mag_hardiron[0] = 0.0;
-  cal.mag_hardiron[1] = 0.0;
-  cal.mag_hardiron[2] = 0.0;
+  //Magnetic Hard Offset
+  cal.mag_hardiron[0] = -3.35;
+  cal.mag_hardiron[1] = -0.74;
+  cal.mag_hardiron[2] = -40.79;
 
+  //Magnetic Soft Offset
   // in uTesla
-  cal.mag_softiron[0] = 1.0;
-  cal.mag_softiron[1] = 0.0;
-  cal.mag_softiron[2] = 0.0;  
-  cal.mag_softiron[3] = 0.0;
-  cal.mag_softiron[4] = 1.0;
+  cal.mag_softiron[0] = 0.96;
+  cal.mag_softiron[1] = 0.02;
+  cal.mag_softiron[2] = 0.01;  
+  cal.mag_softiron[3] = 0.02;
+  cal.mag_softiron[4] = 0.96;
   cal.mag_softiron[5] = 0.0;  
-  cal.mag_softiron[6] = 0.0;
+  cal.mag_softiron[6] = 0.01;
   cal.mag_softiron[7] = 0.0;
-  cal.mag_softiron[8] = 1.0;  
+  cal.mag_softiron[8] = 1.08;  
 
+  //Gyro zero rate offset
   // in Radians/s
-  cal.gyro_zerorate[0] = 0.0;
-  cal.gyro_zerorate[1] = 0.0;
-  cal.gyro_zerorate[2] = 0.0;
+  cal.gyro_zerorate[0] = 0.05;
+  cal.gyro_zerorate[1] = -0.01;
+  cal.gyro_zerorate[2] = -0.01;
 
   cal.saveCalibration();
 
@@ -82,6 +86,7 @@ int initalizeIMU() {
   return NO_ERROR_CODE;
 }
 
+//sets varaibles declared in IMU.h based on latest data IMU
 int updateIMU() {
   
   // Read the motion sensors
