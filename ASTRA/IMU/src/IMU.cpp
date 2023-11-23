@@ -8,10 +8,18 @@ Description: Function definititions for declarations in IMU.h
 Author: Vincent Palmerio
 Last updated: 11/4/2023
 */
-
+float* values;
 float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
+
+float* getValues() {
+  values = (float*)malloc(3 * sizeof(float));
+  values[0] = roll;
+  values[1] = pitch;
+  values[2] = heading;
+  return values;
+}
 
 //loads a predetermined calibration into the EEPROM
 int loadPresetCalibration() {
@@ -44,7 +52,7 @@ int loadPresetCalibration() {
 }
 
 
-int initalizeIMU() {
+int initializeIMU() {
   Serial.begin(115200);
   while (!Serial) yield();
 
