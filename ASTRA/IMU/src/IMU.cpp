@@ -8,13 +8,12 @@ Description: Function definititions for declarations in IMU.h
 Author: Vincent Palmerio
 Last updated: 11/4/2023
 */
-float* values;
+float* values = (float*)malloc(3 * sizeof(float));
 float roll, pitch, heading = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
 float* getValues() {
-  values = (float*)malloc(3 * sizeof(float));
   values[0] = roll;
   values[1] = pitch;
   values[2] = heading;
@@ -130,9 +129,9 @@ int updateIMU() {
 
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
 
-  Serial.print("I2C took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+  //Serial.print("I2C took "); Serial.print(millis()-timestamp); Serial.println(" ms");
 
-  Serial.print("Update took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+  //Serial.print("Update took "); Serial.print(millis()-timestamp); Serial.println(" ms");
 
   Serial.print("Raw: ");
   Serial.print(accel.acceleration.x, 4); Serial.print(", ");
@@ -160,7 +159,7 @@ int updateIMU() {
   Serial.print(qy, 4);
   Serial.print(", ");
   Serial.println(qz, 4);  
-  Serial.print("Took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+  //Serial.print("Took "); Serial.print(millis()-timestamp); Serial.println(" ms");
 #endif
 
 
