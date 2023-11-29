@@ -9,14 +9,15 @@ Author: Vincent Palmerio
 Last updated: 11/4/2023
 */
 float* values = (float*)malloc(3 * sizeof(float));
-float roll, pitch, heading = 0;
+float filteredGX, filteredGY, filteredGZ;
+float roll, pitch, yaw = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
 float* getValues() {
   values[0] = roll;
   values[1] = pitch;
-  values[2] = heading;
+  values[2] = yaw;
   return values;
 }
 
@@ -120,12 +121,13 @@ int updateIMU() {
   // print the heading, pitch and roll
   roll = filter.getRoll();
   pitch = filter.getPitch();
-  heading = filter.getYaw();
+  yaw = filter.getYaw();
 
 
   //float qw, qx, qy, qz;
   filter.getQuaternion(&qw, &qx, &qy, &qz);
 
+  filter.getLinearAcceleration(&filteredGX, &filteredGY, &filteredGZ);
 
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
 

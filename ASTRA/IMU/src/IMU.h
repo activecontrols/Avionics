@@ -43,7 +43,8 @@ Last updated: 11/4/2023
 //#define AHRS_DEBUG_OUTPUT
 
 extern float* values;
-extern float roll, pitch, heading;
+extern float roll, pitch, yaw;
+extern float filteredGX, filteredGY, filteredGZ;
 extern float gx, gy, gz; //degrees per second on gyro
 extern float qw, qx, qy, qz; //quaternarion
 
