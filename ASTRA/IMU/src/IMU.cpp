@@ -6,8 +6,8 @@
 IMU.cpp 
 Description: Function definititions for declarations in IMU.h
 Author: Vincent Palmerio
-Last updated: 11/4/2023
 */
+
 float* values = (float*)malloc(3 * sizeof(float));
 Eigen::VectorXd linearAccelVector(3);
 float linearAccelX, linearAccelY, linearAccelZ = 0;

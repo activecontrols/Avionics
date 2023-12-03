@@ -3,7 +3,6 @@
 IMU.h - Header file for the IMU Driver
 Description: Contains all functions and variables to interact with the IMU
 Author: Vincent Palmerio
-Last updated: 11/4/2023
 */
 
 #ifndef IMU_H

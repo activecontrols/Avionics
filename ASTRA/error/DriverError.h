@@ -2,8 +2,6 @@
 DriverError.h - Error Header/Constants File for Drivers
 Description: Error Constants for all Driver Errors that occur
 Author: Vincent Palmerio
-Created: 10/2/2023
-Last updated: 10/2/2023
 */
 
 #ifndef DRIVER_ERROR_H
