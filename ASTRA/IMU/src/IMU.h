@@ -3,7 +3,6 @@
 IMU.h - Header file for the IMU Driver
 Description: Contains all functions and variables to interact with the IMU
 Author: Vincent Palmerio
-Last updated: 11/4/2023
 */
 
 #ifndef IMU_H
@@ -15,6 +14,8 @@ Last updated: 11/4/2023
 
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>
+
+#include <ArduinoEigenDense.h>
 
 //uncomment to print data to console for just IMU
 //#define ASTRA_IMU_DEBUG 
@@ -44,7 +45,8 @@ Last updated: 11/4/2023
 
 extern float* values;
 extern float roll, pitch, yaw;
-extern float filteredGX, filteredGY, filteredGZ;
+extern Eigen::VectorXd linearAccelVector;
+extern float linearAccelX, linearAccelY, linearAccelZ;
 extern float gx, gy, gz; //degrees per second on gyro
 extern float qw, qx, qy, qz; //quaternarion
 

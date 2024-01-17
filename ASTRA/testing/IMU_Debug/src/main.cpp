@@ -1,5 +1,11 @@
 #include "../../../IMU/src/IMU.h"
 
+/*
+main.cpp
+Description: Main file for running testing code for the IMU driver
+Author: Vincent Palmerio
+*/
+
 Adafruit_LSM6DSOX sox;
 
 void setup() {
@@ -19,7 +25,7 @@ void loop() {
 
     updateIMU();
     Serial.print("Fusion values: ");
-    Serial.print(heading);
+    Serial.print(yaw);
     Serial.print(" ");
     Serial.print(roll);
     Serial.print(" ");
