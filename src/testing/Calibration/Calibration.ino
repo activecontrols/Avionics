@@ -6,6 +6,11 @@ double measurement3;
 double measurement4;
 double measurement5;
 
+double weightsA1 = 0.0084914244;
+double weightsA2 = -0.0182792591;
+double weightsA3 = 0.0115852731;
+double weightsA4 = 0.0051548949;
+
 int torqueSensor = A4;
 int thrustSensor1 = A0;
 int thrustSensor2 = A3;
@@ -38,16 +43,16 @@ void loop() {
   temp5 = 0;
 
   for(int i = 0; i < 10; i++){
-    measurement1 = analogRead(thrustSensor1);
+    measurement1 = analogRead(thrustSensor1) * weightsA1;
     temp1 = temp1 + measurement1;
 
-    measurement2 = analogRead(thrustSensor2);
+    measurement2 = analogRead(thrustSensor2) * weightsA2;
     temp2 = temp2 + measurement2;
     
-    measurement3 = analogRead(thrustSensor3);
+    measurement3 = analogRead(thrustSensor3) * weightsA3;
     temp3 = temp3 + measurement3;
     
-    measurement4 = analogRead(thrustSensor4);
+    measurement4 = analogRead(thrustSensor4)*weightsA4;
     temp4 = temp4 + measurement4;
 
     measurement5 = analogRead(torqueSensor);
@@ -59,18 +64,7 @@ void loop() {
   temp3 = temp3/10;
   temp4 = temp4/10;
   temp5 = temp5/10;
-  Serial.print(temp1);
-  Serial.print(",");
-  Serial.print(temp2);
-  Serial.print(",");
-  Serial.print(temp3);
-  Serial.print(",");
-  Serial.print(temp4);
-  Serial.print(",");
-  Serial.print(temp5);
-  Serial.print(",");
-  Serial.print(mass);
-  Serial.print(",");
-  Serial.print("\n");
+  mass = temp1 + temp2 + temp3 + temp4;
+  Serial.println(mass);
   delay(20);
 }
