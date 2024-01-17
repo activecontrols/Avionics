@@ -1,5 +1,6 @@
 #include "../../../IMU/src/IMU.h"
 
+
 /*
 main.cpp
 Description: Main file for running testing code for the IMU driver
@@ -60,4 +61,5 @@ void loop() {
     Serial.print(gyro.gyro.z,7);
     Serial.println();
     
+
 }
