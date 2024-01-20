@@ -71,6 +71,10 @@ int initializeIMU() {
 
   if (!cal.loadCalibration()) {
     //No calibration loaded/found
+    static bool triedLoadPresetCalibration = false;
+    if (!triedLoadPresetCalibration) {
+      loadPresetCalibration();
+    }
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
     Serial.println("Failed to load calibration");
 #endif
