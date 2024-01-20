@@ -9,7 +9,7 @@ Author: Vincent Palmerio
 
 */
 
-float* values = (float*)malloc(3 * sizeof(float));
+
 Eigen::VectorXd linearAccelVector(3);
 float linearAccelX, linearAccelY, linearAccelZ = 0;
 float roll, pitch, yaw = 0;
@@ -17,6 +17,7 @@ float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
 float* getValues() {
+  float* values = (float*)malloc(3 * sizeof(float));
   values[0] = roll;
   values[1] = pitch;
   values[2] = yaw;
