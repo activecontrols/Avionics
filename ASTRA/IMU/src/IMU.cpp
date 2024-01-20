@@ -16,6 +16,9 @@ float roll, pitch, yaw = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
+/*
+ * You must free the pointer and set it to NULL after using the pointer!
+ */
 float* getValues() {
   float* values = (float*)malloc(3 * sizeof(float));
   values[0] = roll;
