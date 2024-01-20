@@ -6,9 +6,10 @@
 IMU.cpp 
 Description: Function definititions for declarations in IMU.h
 Author: Vincent Palmerio
+
 */
 
-float* values = (float*)malloc(3 * sizeof(float));
+
 Eigen::VectorXd linearAccelVector(3);
 float linearAccelX, linearAccelY, linearAccelZ = 0;
 float roll, pitch, yaw = 0;
@@ -16,11 +17,13 @@ float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
 
 float* getValues() {
+  float* values = (float*)malloc(3 * sizeof(float));
   values[0] = roll;
   values[1] = pitch;
   values[2] = yaw;
   return values;
 }
+
 
 //loads a predetermined calibration into the EEPROM
 int loadPresetCalibration() {
@@ -55,6 +58,7 @@ int loadPresetCalibration() {
 }
 
 
+
 int initializeIMU() {
   Serial.begin(115200);
   while (!Serial) yield();
@@ -62,6 +66,7 @@ int initializeIMU() {
   for (int i = 0; i < linearAccelVector.size(); i++) {
     linearAccelVector(i) = 0;
   }
+
 
   if (!cal.begin()) {
     //Failed to initialize calibration helper
@@ -122,6 +127,7 @@ int updateIMU() {
 
   // Gyroscope needs to be converted from Rad/s to Degree/s
   // the rest are not unit-important
+
   gx = gyro.gyro.x; //* SENSORS_RADS_TO_DPS; //omega x
   gy = gyro.gyro.y; //* SENSORS_RADS_TO_DPS; //omega y
   gz = gyro.gyro.z; //* SENSORS_RADS_TO_DPS; //omega z
@@ -140,6 +146,7 @@ int updateIMU() {
   //float qw, qx, qy, qz;
   filter.getQuaternion(&qw, &qx, &qy, &qz);
 
+
   filter.getLinearAcceleration(&linearAccelX, &linearAccelY, &linearAccelZ); //"a" -  linear acceleration
 
   linearAccelVector << linearAccelX, linearAccelY, linearAccelZ;
@@ -149,7 +156,6 @@ int updateIMU() {
   //Serial.print("I2C took "); Serial.print(millis()-timestamp); Serial.println(" ms");
 
   //Serial.print("Update took "); Serial.print(millis()-timestamp); Serial.println(" ms");
-
   Serial.print("Raw: ");
   Serial.print(accel.acceleration.x, 4); Serial.print(", ");
   Serial.print(accel.acceleration.y, 4); Serial.print(", ");
@@ -177,6 +183,7 @@ int updateIMU() {
   Serial.print(", ");
   Serial.println(qz, 4);  
   //Serial.print("Took "); Serial.print(millis()-timestamp); Serial.println(" ms");
+
 #endif
 
 
