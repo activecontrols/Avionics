@@ -47,7 +47,9 @@ int loadPresetCalibration() {
   cal.gyro_zerorate[1] = -0.01;
   cal.gyro_zerorate[2] = -0.01;
 
-  cal.saveCalibration();
+  if (cal.saveCalibration()) {
+    return FAILED_LOAD_CALIBRATION;
+  }
 
   return NO_ERROR_CODE;
 }
@@ -73,12 +75,14 @@ int initializeIMU() {
     //No calibration loaded/found
     static bool triedLoadPresetCalibration = false;
     if (!triedLoadPresetCalibration) {
-      loadPresetCalibration();
+      if (loadPresetCalibration() == FAILED_LOAD_CALIBRATION) {
+        return FAILED_LOAD_CALIBRATION;
+      }
     }
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
     Serial.println("Failed to load calibration");
 #endif
-    return FAILED_LOAD_CALIBRATION;
+  
   }
 
   if (!init_sensors()) {
