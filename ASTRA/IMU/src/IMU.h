@@ -53,6 +53,9 @@ extern float roll, pitch, yaw;
 extern Eigen::VectorXd linearAccelVector;
 extern float linearAccelX, linearAccelY, linearAccelZ;
 
+extern Eigen::VectorXd gyroscopeVector;
+extern Eigen::VectorXd magnetometerVector;
+
 extern float gx, gy, gz; //degrees per second on gyro
 extern float qw, qx, qy, qz; //quaternarion
 

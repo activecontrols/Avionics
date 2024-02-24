@@ -12,6 +12,8 @@ Author: Vincent Palmerio
 
 Eigen::VectorXd linearAccelVector(3);
 float linearAccelX, linearAccelY, linearAccelZ = 0;
+Eigen::VectorXd gyroscopeVector(3);
+Eigen::VectorXd magnetometerVector(3);
 float roll, pitch, yaw = 0;
 float gx, gy, gz = 0; //degrees per second on gyro
 float qw, qx, qy, qz = 0; //quaternarion
@@ -153,6 +155,8 @@ int updateIMU() {
   filter.getLinearAcceleration(&linearAccelX, &linearAccelY, &linearAccelZ); //"a" -  linear acceleration
 
   linearAccelVector << linearAccelX, linearAccelY, linearAccelZ;
+  gyroscopeVector << gx, gy, gz;
+  magnetometerVector << mag.magnetic.x, mag.magnetic.y, mag.magnetic.z;
 
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
 
