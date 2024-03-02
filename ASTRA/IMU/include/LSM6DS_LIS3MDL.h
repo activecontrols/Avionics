@@ -30,7 +30,8 @@ bool init_sensors(TwoWire *i2c_wire) {
   if (!lsm6ds.begin_I2C() && !lsm6ds.begin_I2C((uint8_t) 0x6A, i2c_wire, 0L) && !lsm6ds.begin_I2C((uint8_t) 0x6B, i2c_wire, 0L)) {
     return false;
   }
-  if (!lis3mdl.begin_I2C() && !lis3mdl.begin_I2C((uint8_t) 0x1E, i2c_wire) && !lis3mdl.begin_I2C((uint8_t) 0x1C, i2c_wire)) {
+  if (!lis3mdl.begin_I2C((uint8_t) 0x1E, i2c_wire) && !lis3mdl.begin_I2C((uint8_t) 0x1C, i2c_wire)) {
+    Serial.println("ugh");
     return false;
   }
 
