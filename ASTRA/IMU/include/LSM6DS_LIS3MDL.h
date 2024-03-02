@@ -18,15 +18,22 @@ Adafruit_LIS3MDL lis3mdl;
 #include <Adafruit_LSM6DSOX.h>
 Adafruit_LSM6DSOX lsm6ds;
 
+#include <Wire.h>
+
 Adafruit_Sensor* accelerometer;
 Adafruit_Sensor* gyroscope;
 Adafruit_LIS3MDL* magnetometer;
 
+bool init_sensors(TwoWire *i2c_wire) {
 
-bool init_sensors(void) {
-  if (!lsm6ds.begin_I2C() || !lis3mdl.begin_I2C()) {
+  //See https://www.adafruit.com/product/4517 for possible I2C addresses for each device
+  if (!lsm6ds.begin_I2C() && !lsm6ds.begin_I2C((uint8_t) 0x6A, i2c_wire, 0L) && !lsm6ds.begin_I2C((uint8_t) 0x6B, i2c_wire, 0L)) {
     return false;
   }
+  if (!lis3mdl.begin_I2C() && !lis3mdl.begin_I2C((uint8_t) 0x1E, i2c_wire) && !lis3mdl.begin_I2C((uint8_t) 0x1C, i2c_wire)) {
+    return false;
+  }
+
   accelerometer = lsm6ds.getAccelerometerSensor();
   gyroscope = lsm6ds.getGyroSensor();
   magnetometer = &lis3mdl;

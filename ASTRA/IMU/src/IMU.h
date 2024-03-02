@@ -14,12 +14,10 @@ Last updated: 11/4/2023
 #include <Adafruit_LSM6DSOX.h>
 #include <Adafruit_LIS3MDL.h>
 #include <Adafruit_AHRS.h>
-
 #include <Adafruit_Sensor_Calibration.h>
 #include <Adafruit_AHRS.h>
-
-
 #include <ArduinoEigenDense.h>
+#include <Wire.h>
 
 //uncomment to print data to console for just IMU
 //#define ASTRA_IMU_DEBUG 
@@ -43,8 +41,9 @@ Last updated: 11/4/2023
   Adafruit_Sensor_Calibration_SDFat cal;
 #endif
 
-#define FILTER_UPDATE_RATE_HZ 100
-#define PRINT_EVERY_N_UPDATES 10
+#define FILTER_UPDATE_RATE_HZ (100)
+#define PRINT_EVERY_N_UPDATES (10)
+#define IMU_WIRE Wire
 //#define AHRS_DEBUG_OUTPUT
 
 

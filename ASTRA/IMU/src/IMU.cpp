@@ -65,9 +65,9 @@ int loadPresetCalibration() {
 
 
 int initializeIMU() {
-  Serial.begin(115200);
-  while (!Serial) yield();
-
+  //Serial.begin(115200);
+  //while (!Serial) yield();
+  //Serial.println("test");
   for (int i = 0; i < linearAccelVector.size(); i++) {
     linearAccelVector(i) = 0;
   }
@@ -95,7 +95,7 @@ int initializeIMU() {
   
   }
 
-  if (!init_sensors()) {
+  if (!init_sensors(&IMU_WIRE)) {
     //Failed to find sensors
 #if defined(ASTRA_FULL_DEBUG) or defined(ASTRA_IMU_DEBUG)
     Serial.println("Failed to find sensors");
