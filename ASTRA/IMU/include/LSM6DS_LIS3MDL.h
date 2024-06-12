@@ -3,7 +3,10 @@
 LSM6DS_LIS3MDL.h
 Description: Header file for sensor-setup function definitions
 Author: Vincent Palmerio, (Original: https://github.com/adafruit/Adafruit_AHRS/blob/master/examples/calibrated_orientation/calibrated_orientation.ino)
+
+
 Last updated: 11/4/2023
+
 */
 
 #ifndef LSM6DS_LIS3MDL
